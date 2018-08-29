@@ -1,0 +1,19 @@
+{
+    "name": "make-comp",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "git@github.com:2gnc/make-comp.git",
+    "author": "2gnc <ksenia.v.polyakova@mail.ru>",
+    "license": "MIT",
+    "engines": {
+        "node": ">=8"
+    },
+    "preferGlobal": true,
+    "bin": {
+        "make-comp": "./bin/make-comp"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "minimist": "^1.2.0"
+    }
+}

@@ -1,0 +1,25 @@
+import * as React from 'react';
+import Bem from '../../service/Bem/Bem';
+<<TRANSLATION>>
+import './<<COMPONENT>>.css';
+
+export interface StateProps {}
+export interface DispatchProps {}
+export interface OwnProps {}
+export interface <<COMPONENT>>State {}
+
+export type <<COMPONENT>>Props = StateProps & DispatchProps & OwnProps;
+
+const BLOCK = <<BLOCK>>;
+
+interface <<COMPONENT>>Props {}
+export default class <<COMPONENT>> extends React.Component \<
+    <<COMPONENT>>Props
+    <<COMPONENT>>State
+\> {
+    render() {
+        return (
+            null
+        )
+    }
+}

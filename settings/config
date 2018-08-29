@@ -1,0 +1,3 @@
+visual = /src/components
+container = /src/containers
+translation = src/i18n
