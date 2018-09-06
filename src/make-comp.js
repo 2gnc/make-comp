@@ -1,10 +1,28 @@
 const {
     getFileText,
     getRoot,
-    makeFolder
+    makeFolder,
+    makeFile,
+    logError,
+    getInitialStructure,
+    getPathSettings
 } = require('./helpers');
+const message = require('./messages');
 
 module.exports = (args) => {
+    const {_} = args;
+    const NO_CONTAINER = !!(args['c'] || args['container']);
+    const NO_TRANSLATION = !!(args['t'] || args['translation']);
+    const NO_DOCUMENTATION = !!(args['d'] || args['docs']);
+    const NEED_HELP = !!(args['h'] || args['help']);
+    const COMPONENT = _[0];
+
+    console.log(args);
+    console.log(NO_CONTAINER, NO_DOCUMENTATION, NO_TRANSLATION, COMPONENT, NEED_HELP);
+
+    if (args._.length !== 1) {
+        return NEED_HELP ? console.log(message.USAGE) :logError('NOCOMP');
+    }
 
     Promise.all([
             getRoot(process.env.PWD),
@@ -15,25 +33,48 @@ module.exports = (args) => {
             getFileText('MyPerfectComponent', 'translation'),
         ])
         .then((res) => {
-            console.log(res[0]);
-            makeFolder(res[0], 'MyPerfectComponent')
-
+            makeFolder(res[0], 'MyPerfectComponent');
+            makeFile(`${res[0]}/MyPerfectComponent`, 'MyPerfectComponent.js', 'test');
+            return res[0]
+        })
+        .then((res) => {
+            return Promise.all([
+                getPathSettings(res),
+                getInitialStructure(res, 'MyPerfectComponent')
+            ])
+        })
+        .then(data => {
+            console.log(data[0]);
+            console.log(data[1]);
         })
         .catch(e => e);
 };
 
-
-// TODO при досоздании перевода, добавлять импорт в визуальный компонент
+// TODO разобрать аргемнты командной строки (какие могут быть, на все остальные возвращать хелп)
+// TODO - обработчик создания визуального компонента
+// TODO - обработчик создания контейнера
+// TODO - обработчик создания перевода
+// TODO при досоздании перевода, добавлять импорт в визуальный компонент (в обработчике создания перевода обрабаотывать кейс, когда визуальный компонент не создавался (значит был создан ранее))
 // TODO сделать команду --help (выводит описание и подсказки)
-// TODO сделать команду config visual src/components
-// TODO сделать команду config container src/containers
-// TODO сделать команду config translation src/i18n
+// TODO сделать команду config.json visual src/components
+// TODO сделать команду config.json container src/containers
+// TODO сделать команду config.json translation src/i18n
 // TODO добавить флаги -c -t которые убирают создание контейнера и перевода соответственно
 // TODO логика:
 // если вызвать make-comp Test без аргументов, то сначала проверяем, есть ли уже этот компонент (визуальный (js, css, md), контейнер и перевод).
 // Чего не хватает - создать. Флаги исключают определенные составляющие.
 // Уже созданные составляюие компонентов не перезаписываем.
-
+//
+// По полученному имени проверить что уже есть:
+// initialStructure = {
+//     visual: {
+//         js: boolean;
+//         css: boolean;
+//         md: boolean;
+//     };
+//     container: boolean;
+//     translation: boolean;
+// }
 //
 // логика создания директорий
 // 1 составляющая компонента === один хелпер
