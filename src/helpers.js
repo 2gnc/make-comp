@@ -2,7 +2,7 @@ const fs = require('fs');
 const message = require('./messages');
 
 /**
- * @desc Превращает строку из формата CamelCase в формат cebab-case
+ * @desc Превращает строку из формата CamelCase в формат cebab-case (для классов css)
  * @param str {String} Исходная строка.
  * @returns {string | void | *}
  * @private
@@ -245,6 +245,18 @@ async function getPathSettings (path) {
      return JSON.parse(rawFile)
 }
 
+async function makeWhatToDo(userInput) {
+    const obj = {};
+    try {
+        await getRoot(process.env.PWD).then(root => obj.root = root).catch(e => e);
+        return obj;
+    } catch (e) {
+        return e;
+    }
+
+
+}
+
 module.exports.getFileText = getFileText;
 module.exports.getRoot = getRoot;
 module.exports.makeFolder = makeFolder;
@@ -252,3 +264,5 @@ module.exports.makeFile = makeFile;
 module.exports.logError = logError;
 module.exports.getInitialStructure = getInitialStructure;
 module.exports.getPathSettings = getPathSettings;
+module.exports.makeWhatToDo = makeWhatToDo;
+module.exports.parseUserInput = parseUserInput;
