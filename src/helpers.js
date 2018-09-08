@@ -246,8 +246,20 @@ async function getPathSettings (path) {
 }
 
 async function makeWhatToDo(userInput) {
-    const obj = {};
+    const obj = {
+        root: undefined,
+        jsExtension: undefined,
+        visual: {},
+        documentation: {},
+        container: {},
+        translation: {},
+    };
     try {
+        obj.visual.toCreate = true;
+        obj.documentation.toCreate = !(userInput['d'] || userInput['docs']);
+        obj.container.toCreate = !(userInput['c'] || userInput['container']);
+        obj.translation.toCreate = !(userInput['t'] || userInput['translation']);
+
         await getRoot(process.env.PWD).then(root => obj.root = root).catch(e => e);
         return obj;
     } catch (e) {
@@ -265,4 +277,33 @@ module.exports.logError = logError;
 module.exports.getInitialStructure = getInitialStructure;
 module.exports.getPathSettings = getPathSettings;
 module.exports.makeWhatToDo = makeWhatToDo;
-module.exports.parseUserInput = parseUserInput;
+
+
+// {
+//     root: string                         +
+//     jsExtension: string
+//     visual: {
+//         path: string
+//         toCreate: boolean
+//         alreadyExists: boolean
+//         wasCreated: true
+//     }
+//     documentation: {
+//         path: string
+//         toCreate: boolean
+//         alreadyExists: boolean
+//         wasCreated: true
+//     }
+//     container: {
+//         path: string
+//         toCreate: boolean
+//         alreadyExists: boolean
+//         wasCreated: true
+//     }
+//     translation: {
+//         path: string
+//         toCreate: boolean
+//         alreadyExists: boolean
+//         wasCreated: true
+//     }
+// }

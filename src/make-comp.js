@@ -11,23 +11,17 @@ const {
 const message = require('./messages');
 
 module.exports = (args) => {
-    const {_} = args;    // TODO перенести эту логику внутрь makeWhatToDo()
-    const NO_CONTAINER = !!(args['c'] || args['container']);
-    const NO_TRANSLATION = !!(args['t'] || args['translation']);
-    const NO_DOCUMENTATION = !!(args['d'] || args['docs']);
-    const NEED_HELP = !!(args['h'] || args['help']);
-    const COMPONENT = _[0];
-
-    console.log(args);
-    console.log(NO_CONTAINER, NO_DOCUMENTATION, NO_TRANSLATION, COMPONENT, NEED_HELP);
-
-    if (args._.length !== 1) {
-        return NEED_HELP ? console.log(message.USAGE) :logError('NOCOMP');
-    }
 
     async function main(userInput) {
-        const mainObj = await makeWhatToDo(userInput);
-        console.log(mainObj);
+        const COMPONENT = userInput._[0];
+        const NEED_HELP = !!(userInput['h'] || userInput['help']);
+
+        if (userInput._.length !== 1) {
+            return NEED_HELP ? console.log(message.USAGE) :logError('NOCOMP', null);
+        }
+
+        const WHAT_TO_DO = await makeWhatToDo(userInput);
+        console.log(WHAT_TO_DO);
     }
     main(args);
 };
