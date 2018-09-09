@@ -1,5 +1,6 @@
 const fs = require('fs');
 const message = require('./messages');
+const { PARTS } = require('./constants');
 
 /**
  * @desc Превращает строку из формата CamelCase в формат cebab-case (для классов css)
@@ -249,19 +250,39 @@ async function makeWhatToDo(userInput) {
     const obj = {
         root: undefined,
         jsExtension: undefined,
-        visual: {},
-        documentation: {},
-        container: {},
-        translation: {},
+        toCreate: [],
+        [PARTS.VISUAL]: {},
+        [PARTS.DOCUMENTATION]: {},
+        [PARTS.CONTAINER]: {},
+        [PARTS.TRANSLATION]: {},
     };
     try {
-        obj.visual.toCreate = true;
-        obj.documentation.toCreate = !(userInput['d'] || userInput['docs']);
-        obj.container.toCreate = !(userInput['c'] || userInput['container']);
-        obj.translation.toCreate = !(userInput['t'] || userInput['translation']);
 
+        // получаем список соатвляющих компонента, которые нужно создать (парсим пользовательский ввод)
+        obj.toCreate.push(PARTS.VISUAL);
+        if (!(userInput['d'] || userInput['docs'])) {
+            obj.toCreate.push(PARTS.DOCUMENTATION)
+        }
+        if (!(userInput['c'] || userInput['container'])) {
+            obj.toCreate.push(PARTS.CONTAINER)
+        }
+        if (!(userInput['t'] || userInput['translation'])) {
+            obj.toCreate.push(PARTS.TRANSLATION)
+        }
+
+        // получаем корень проекта
         await getRoot(process.env.PWD).then(root => obj.root = root).catch(e => e);
+
+        // получаем настройки путей
+        const settings = JSON.parse(await _getFileContents(`${obj.root}/settings/config.json`));
+        obj.jsExtension = settings.jsExtension;
+        obj[PARTS.VISUAL].path = settings[PARTS.VISUAL];
+        obj[PARTS.DOCUMENTATION].path = settings[PARTS.VISUAL];
+        obj[PARTS.CONTAINER].path = settings[PARTS.CONTAINER];
+        obj[PARTS.TRANSLATION].path = settings[PARTS.TRANSLATION];
+
         return obj;
+
     } catch (e) {
         return e;
     }
@@ -282,27 +303,24 @@ module.exports.makeWhatToDo = makeWhatToDo;
 // {
 //     root: string                         +
 //     jsExtension: string
+//     toCreate: ['visual' | 'documentation' | 'container' | 'translation']
 //     visual: {
 //         path: string
-//         toCreate: boolean
 //         alreadyExists: boolean
 //         wasCreated: true
 //     }
 //     documentation: {
 //         path: string
-//         toCreate: boolean
 //         alreadyExists: boolean
 //         wasCreated: true
 //     }
 //     container: {
 //         path: string
-//         toCreate: boolean
 //         alreadyExists: boolean
 //         wasCreated: true
 //     }
 //     translation: {
 //         path: string
-//         toCreate: boolean
 //         alreadyExists: boolean
 //         wasCreated: true
 //     }

@@ -1,6 +1,6 @@
 {
-    "visual": "/src/components",
-    "container": "/src/containers",
-    "translation": "src/i18n",
+    "VISUAL": "/src/components",
+    "CONTAINER": "/src/containers",
+    "TRANSLATION": "src/i18n",
     "jsExtension": "tsx"
 }
