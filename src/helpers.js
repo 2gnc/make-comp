@@ -131,7 +131,7 @@ function logError (errCode, otherParams) {
     console.log(`${_msg(errCode)}${additionalInfo}`)
 }
 
-/**                                                                                                               ,
+/**
  * @desc Получает готовый текст для файла.
  * @param componentName {String} Имя компонента
  * @param type {'visual-css' | 'visual-js' | 'visual-md' | 'container' | 'translation'} тип файла
@@ -196,56 +196,10 @@ async function makeFile(path, fileName, fileContent) {
 }
 
 /**
- *
- * @desc Анализирует изначальную структуту компонента и определяет, есть ли уже в проекте какие-либо его составляющие.
- * @param rootPath {String} Корень проекта.
- * @param componentName {String} Имя компонента.
- * @param pathsSettings {Object} Объект с настройками путей.
- * @returns {Promise<{visual: {js: boolean, css: boolean, md: boolean}, container: boolean, translation: boolean}>}
+ * @desc Возвращает объект с настройками, на сонове которого будут создаваться файлы
+ * @param userInput
+ * @returns {Promise<*>}
  */
-
-async function getInitialStructure  (rootPath, componentName, pathsSettings) {
-    const structure =  {
-        visual: {
-            js: undefined,
-            css: undefined,
-            md: undefined,
-        },
-        container: undefined,
-        translation: undefined
-    };
-
-    const {visual, container, translation, jsExtension} = pathsSettings;
-
-    await _checkIfFileNotExist(`${rootPath}/${visual}/${componentName}/${componentName}.${jsExtension}`)   //TODO порефакторить https://habr.com/company/ruvds/blog/326074/
-            .then(() => structure.visual.js = false)
-            .catch(() => structure.visual.js = true);
-    await _checkIfFileNotExist(`${rootPath}/${visual}/${componentName}/${componentName}.css`)
-            .then(() => structure.visual.css = false)
-            .catch(() => structure.visual.css = true);
-    await _checkIfFileNotExist(`${rootPath}/${visual}/${componentName}/${componentName}.md`)
-            .then(() => structure.visual.md = false)
-            .catch(() => structure.visual.md = true);
-    await _checkIfFileNotExist(`${rootPath}/${container}/${componentName}/${componentName}.${jsExtension}`)
-            .then(() => structure.container = false)
-            .catch(() => structure.container = true);
-    await _checkIfFileNotExist(`${rootPath}/${translation}/components_${componentName}/components_${componentName}.i18n/ru.js`)
-            .then(() => structure.translation = false)
-            .catch(() => structure.translation = true);
-
-    return structure;
-}
-
-/**
- * @desc Возвращает объект с настройками путей и расширений
- * @param path {String} Корень проекта
- * @returns {Promise<{}>}
- */
-
-async function getPathSettings (path) {
-     const rawFile = await _getFileContents(`${path}/settings/config.json`);
-     return JSON.parse(rawFile)
-}
 
 async function makeWhatToDo(userInput) {
     const obj = {
@@ -328,6 +282,4 @@ module.exports.getRoot = getRoot;
 module.exports.makeFolder = makeFolder;
 module.exports.makeFile = makeFile;
 module.exports.logError = logError;
-module.exports.getInitialStructure = getInitialStructure;
-module.exports.getPathSettings = getPathSettings;
 module.exports.makeWhatToDo = makeWhatToDo;
