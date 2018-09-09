@@ -53,6 +53,7 @@ function _makeFolder (path, folderName) {
  * @private
  */
 function _checkIfFileNotExist (path) {
+    console.log(path);
     return new Promise((resolve, reject) => {
         fs.stat(path, (err, stats) => {
             if (!err) {
@@ -248,6 +249,7 @@ async function getPathSettings (path) {
 
 async function makeWhatToDo(userInput) {
     const obj = {
+        component: userInput._[0],
         root: undefined,
         jsExtension: undefined,
         toCreate: [],
@@ -280,22 +282,37 @@ async function makeWhatToDo(userInput) {
         const settings = JSON.parse(await _getFileContents(`${obj.root}/settings/config.json`));
         obj.jsExtension = settings.jsExtension;
 
-        obj.toCreate.forEach(async item => {
+        obj.toCreate.forEach(item => {
            obj[PARTS[item]].path = settings[PARTS[item]];
-            // для каждой составляющей компоненета (если она нужна), проверяем, есть ли она уже в проекте
-            switch (item) {
-                case PARTS.VISUAL:
-                case PARTS.STYLES:
-                case PARTS.DOCUMENTATION:
-                case PARTS.CONTAINER:
-                case PARTS.TRANSLATION:
-                default:
-            }
         });
 
+        // для каждой составляющей компоненета (если она нужна), проверяем, есть ли она уже в проекте
 
+        await _checkIfFileNotExist(`${obj.root}${obj[PARTS.VISUAL].path}/${obj.component}/${obj.component}.${obj.jsExtension}`)
+            .then(() => obj[PARTS.VISUAL].isAlreadyExists = false)
+            .catch(() => obj[PARTS.VISUAL].isAlreadyExists = true);
 
+        await _checkIfFileNotExist(`${obj.root}${obj[PARTS.STYLES].path}/${obj.component}/${obj.component}.css`)
+            .then(() => obj[PARTS.STYLES].isAlreadyExists = false)
+            .catch(() => obj[PARTS.STYLES].isAlreadyExists = true);
 
+        if(obj[PARTS.DOCUMENTATION].path) {
+            await _checkIfFileNotExist(`${obj.root}${obj[PARTS.DOCUMENTATION].path}/${obj.component}/${obj.component}.md`)
+                .then(() => obj[PARTS.DOCUMENTATION].isAlreadyExists = false)
+                .catch(() => obj[PARTS.DOCUMENTATION].isAlreadyExists = true);
+        }
+
+        if(obj[PARTS.CONTAINER].path) {
+            await _checkIfFileNotExist(`${obj.root}${obj[PARTS.CONTAINER].path}/${obj.component}Container/${obj.component}Container.${obj.jsExtension}`)
+                .then(() => obj[PARTS.CONTAINER].isAlreadyExists = false)
+                .catch(() => obj[PARTS.CONTAINER].isAlreadyExists = true);
+        }
+
+        if(obj[PARTS.TRANSLATION].path) {
+            await _checkIfFileNotExist(`${obj.root}${obj[PARTS.TRANSLATION].path}/components_${obj.component}/componets_${obj.component}.18n/ru.js`)
+                .then(() => obj[PARTS.TRANSLATION].isAlreadyExists = false)
+                .catch(() => obj[PARTS.TRANSLATION].isAlreadyExists = true);
+        }
 
         return obj;
 
@@ -314,30 +331,3 @@ module.exports.logError = logError;
 module.exports.getInitialStructure = getInitialStructure;
 module.exports.getPathSettings = getPathSettings;
 module.exports.makeWhatToDo = makeWhatToDo;
-
-
-// {
-//     + root: string
-//     + jsExtension: string
-//     + toCreate: ['visual' | 'documentation' | 'container' | 'translation']
-//     visual: {
-//         + path: string
-//         isAlreadyExists: boolean
-//         wasCreated: true
-//     }
-//     documentation: {
-//         + path: string
-//         isAlreadyExists: boolean
-//         wasCreated: true
-//     }
-//     container: {
-//         + path: string
-//         isAlreadyExists: boolean
-//         wasCreated: true
-//     }
-//     translation: {
-//         + path: string
-//         isAlreadyExists: boolean
-//         wasCreated: true
-//     }
-// }
