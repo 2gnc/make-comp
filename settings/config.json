@@ -1,5 +1,7 @@
 {
     "VISUAL": "/src/components",
+    "DOCUMENTATION": "/src/components",
+    "STYLES": "/src/components",
     "CONTAINER": "/src/containers",
     "TRANSLATION": "src/i18n",
     "jsExtension": "tsx"

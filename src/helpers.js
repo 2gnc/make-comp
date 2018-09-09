@@ -252,14 +252,17 @@ async function makeWhatToDo(userInput) {
         jsExtension: undefined,
         toCreate: [],
         [PARTS.VISUAL]: {},
+        [PARTS.STYLES]: {},
         [PARTS.DOCUMENTATION]: {},
         [PARTS.CONTAINER]: {},
         [PARTS.TRANSLATION]: {},
     };
+
     try {
 
         // получаем список соатвляющих компонента, которые нужно создать (парсим пользовательский ввод)
         obj.toCreate.push(PARTS.VISUAL);
+        obj.toCreate.push(PARTS.STYLES);
         if (!(userInput['d'] || userInput['docs'])) {
             obj.toCreate.push(PARTS.DOCUMENTATION)
         }
@@ -276,10 +279,23 @@ async function makeWhatToDo(userInput) {
         // получаем настройки путей
         const settings = JSON.parse(await _getFileContents(`${obj.root}/settings/config.json`));
         obj.jsExtension = settings.jsExtension;
-        obj[PARTS.VISUAL].path = settings[PARTS.VISUAL];
-        obj[PARTS.DOCUMENTATION].path = settings[PARTS.VISUAL];
-        obj[PARTS.CONTAINER].path = settings[PARTS.CONTAINER];
-        obj[PARTS.TRANSLATION].path = settings[PARTS.TRANSLATION];
+
+        obj.toCreate.forEach(async item => {
+           obj[PARTS[item]].path = settings[PARTS[item]];
+            // для каждой составляющей компоненета (если она нужна), проверяем, есть ли она уже в проекте
+            switch (item) {
+                case PARTS.VISUAL:
+                case PARTS.STYLES:
+                case PARTS.DOCUMENTATION:
+                case PARTS.CONTAINER:
+                case PARTS.TRANSLATION:
+                default:
+            }
+        });
+
+
+
+
 
         return obj;
 
@@ -301,27 +317,27 @@ module.exports.makeWhatToDo = makeWhatToDo;
 
 
 // {
-//     root: string                         +
-//     jsExtension: string
-//     toCreate: ['visual' | 'documentation' | 'container' | 'translation']
+//     + root: string
+//     + jsExtension: string
+//     + toCreate: ['visual' | 'documentation' | 'container' | 'translation']
 //     visual: {
-//         path: string
-//         alreadyExists: boolean
+//         + path: string
+//         isAlreadyExists: boolean
 //         wasCreated: true
 //     }
 //     documentation: {
-//         path: string
-//         alreadyExists: boolean
+//         + path: string
+//         isAlreadyExists: boolean
 //         wasCreated: true
 //     }
 //     container: {
-//         path: string
-//         alreadyExists: boolean
+//         + path: string
+//         isAlreadyExists: boolean
 //         wasCreated: true
 //     }
 //     translation: {
-//         path: string
-//         alreadyExists: boolean
+//         + path: string
+//         isAlreadyExists: boolean
 //         wasCreated: true
 //     }
 // }
