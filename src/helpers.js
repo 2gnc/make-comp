@@ -273,9 +273,25 @@ async function makeWhatToDo(userInput) {
     } catch (e) {
         return e;
     }
+}
 
+/**
+ * Создает составляющую компонета (папку, файлы)
+ * @param part {PARTS} что создавать
+ * @param prefs {Object} объекта с настройками
+ * @returns {Promise<void>}
+ */
+
+async function componentPartCreator(part, prefs) {
 
 }
+
+// visual: если !isAlreadyExists получить шаблон для visual, создавть папку по настройкам (если еще не создана), записать туда файл, отметиь, что файл был создан
+// styles: если !isAlreadyExists получить шаблон для css, создать папку, записать туда файл, отметить, что файл создан
+// docs: если !isAlreadyExists получить шаблон для docs, создать папку, записать туда файл, отметить, что файл создан
+// container: если !isAlreadyExists получить шаблон для container, создать папку, записать туда файл, отметить, что файл создан
+// translation: если !isAlreadyExists получить шаблон для css, создать папку, записать туда файл, отметить, что файл создан, если visual.WasCreated, дописать в него строчку с импортом перевода
+
 
 module.exports.getFileText = getFileText;
 module.exports.getRoot = getRoot;
@@ -283,3 +299,4 @@ module.exports.makeFolder = makeFolder;
 module.exports.makeFile = makeFile;
 module.exports.logError = logError;
 module.exports.makeWhatToDo = makeWhatToDo;
+module.exports.componentPartCreator = componentPartCreator;

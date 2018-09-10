@@ -1,6 +1,7 @@
 const {
     logError,
-    makeWhatToDo
+    makeWhatToDo,
+    componentPartCreator
 } = require('./helpers');
 const message = require('./messages');
 
@@ -15,12 +16,8 @@ module.exports = (args) => {
 
         const WHAT_TO_DO = await makeWhatToDo(userInput);
         console.log(WHAT_TO_DO);
+
+
     }
     main(args);
 };
-
-// visual: если !isAlreadyExists
-// styles:
-// docs:
-// container:
-// translation
